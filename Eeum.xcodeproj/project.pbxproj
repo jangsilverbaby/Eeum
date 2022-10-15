@@ -16,6 +16,7 @@
 		F29BD0EF28F77B9700513A6D /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F29BD0EE28F77B9700513A6D /* SnapKit */; };
 		F2ADCF1528F8CE78007D69DF /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2ADCF1428F8CE77007D69DF /* Store.swift */; };
 		F2ADCF1D28FA872A007D69DF /* BannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2ADCF1C28FA872A007D69DF /* BannerCell.swift */; };
+		F2ADCF1F28FB8076007D69DF /* PaddedTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2ADCF1E28FB8076007D69DF /* PaddedTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		F29BD0E728F77A6100513A6D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F2ADCF1428F8CE77007D69DF /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		F2ADCF1C28FA872A007D69DF /* BannerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerCell.swift; sourceTree = "<group>"; };
+		F2ADCF1E28FB8076007D69DF /* PaddedTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 		F2ADCF1628FA7887007D69DF /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				F2ADCF1E28FB8076007D69DF /* PaddedTextField.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -185,6 +188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F29BD0DE28F77A5F00513A6D /* ViewController.swift in Sources */,
+				F2ADCF1F28FB8076007D69DF /* PaddedTextField.swift in Sources */,
 				F29BD0DA28F77A5F00513A6D /* AppDelegate.swift in Sources */,
 				F29BD0DC28F77A5F00513A6D /* SceneDelegate.swift in Sources */,
 				F2ADCF1528F8CE78007D69DF /* Store.swift in Sources */,
