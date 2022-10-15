@@ -19,7 +19,6 @@ struct Store {
 enum Category {
     case cafe
     case restorant
-    case beauty
     case tour
     case sports
 }
