@@ -33,6 +33,17 @@ class ViewController: UIViewController {
         target: self,
         action: nil)
     
+    lazy var scrollView: UIScrollView = {
+       let scrollView = UIScrollView()
+        scrollView.backgroundColor = .gray1
+       return scrollView
+    }()
+    
+    lazy var bannerView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout.init()
         layout.scrollDirection = .horizontal
@@ -222,12 +233,13 @@ class ViewController: UIViewController {
     }
     
     func setupSubView() {
-        view.backgroundColor = .gray1
+        view.addSubview(scrollView)
         
-        view.addSubview(collectionView)
-        view.addSubview(pageControl)
+        scrollView.addSubview(bannerView)
+        bannerView.addSubview(collectionView)
+        bannerView.addSubview(pageControl)
         
-        view.addSubview(stackView)
+        scrollView.addSubview(stackView)
         stackView.addArrangedSubview(categoryView)
         categoryView.addSubview(categoryTextField)
         categoryView.addSubview(downImage1)
@@ -235,20 +247,29 @@ class ViewController: UIViewController {
         districtView.addSubview(districtTextField)
         districtView.addSubview(downImage2)
         
-        view.addSubview(searchView)
+        scrollView.addSubview(searchView)
         searchView.addSubview(searchTextFieldView)
         searchTextFieldView.addSubview(searchTextField)
         searchTextFieldView.addSubview(searchCancelButton)
         searchTextFieldView.addSubview(searchButton)
         
-        view.addSubview(addressView)
+        scrollView.addSubview(addressView)
         addressView.addSubview(addressImage)
         addressView.addSubview(addressLabel)
         
-        collectionView.snp.makeConstraints {
+        scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        bannerView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalTo(view)
             $0.height.equalTo(150)
+        }
+        
+        collectionView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
         pageControl.snp.makeConstraints {
@@ -258,7 +279,7 @@ class ViewController: UIViewController {
         
         stackView.snp.makeConstraints {
             $0.top.equalTo(collectionView.snp.bottom).offset(1)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalTo(view)
             $0.height.equalTo(50)
         }
         
@@ -284,7 +305,7 @@ class ViewController: UIViewController {
         
         searchView.snp.makeConstraints {
             $0.top.equalTo(stackView.snp.bottom).offset(1)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalTo(view)
             $0.height.equalTo(80)
         }
         
@@ -312,7 +333,7 @@ class ViewController: UIViewController {
         
         addressView.snp.makeConstraints {
             $0.top.equalTo(searchView.snp.bottom).offset(1)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalTo(view)
             $0.height.equalTo(50)
         }
         
