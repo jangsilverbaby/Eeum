@@ -149,6 +149,25 @@ class ViewController: UIViewController {
         return pickerView
     }()
     
+    lazy var addressView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        return view
+    }()
+    
+    lazy var addressImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "scope")
+        imageView.tintColor = .black
+        return imageView
+    }()
+    
+    lazy var addressLabel: UILabel = {
+        let label = UILabel()
+        label.text = "address~~"
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -161,9 +180,9 @@ class ViewController: UIViewController {
     func setupNavigation() {
         navigationController?.navigationBar.backgroundColor = .white
         title = "혜택+가맹점"
-        backButton.tintColor = .systemGray
+        backButton.tintColor = .black
         navigationItem.leftBarButtonItem = backButton
-        menuButton.tintColor = .systemGray
+        menuButton.tintColor = .black
         navigationItem.rightBarButtonItem = menuButton
     }
     
@@ -180,6 +199,10 @@ class ViewController: UIViewController {
         stackView.addArrangedSubview(districtView)
         districtView.addSubview(districtTextField)
         districtView.addSubview(downImage2)
+        
+        view.addSubview(addressView)
+        addressView.addSubview(addressImage)
+        addressView.addSubview(addressLabel)
         
         collectionView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -216,6 +239,22 @@ class ViewController: UIViewController {
         downImage2.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().inset(8)
+        }
+        
+        addressView.snp.makeConstraints {
+            $0.top.equalTo(stackView.snp.bottom).inset(2)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(50)
+        }
+        
+        addressImage.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(15)
+            $0.centerY.equalToSuperview()
+        }
+        
+        addressLabel.snp.makeConstraints {
+            $0.leading.equalTo(addressImage.snp.trailing)
+            $0.centerY.equalToSuperview()
         }
         
     }
