@@ -66,7 +66,7 @@ class ViewController: UIViewController {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.alignment = .center
-        stackView.spacing = 2
+        stackView.spacing = 1
         return stackView
     }()
     
@@ -82,7 +82,6 @@ class ViewController: UIViewController {
         textField.inputAccessoryView = toolbar
         textField.text = "업종 전체"
         textField.font = UIFont.systemFont(ofSize: 15)
-        textField.textColor = .gray
         textField.backgroundColor = .white
         textField.tintColor = .clear
         return textField
@@ -91,7 +90,7 @@ class ViewController: UIViewController {
     lazy var downImage1: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "chevron.down")!
-        imageView.tintColor = .gray
+        imageView.tintColor = .black
         return imageView
     }()
     
@@ -107,7 +106,6 @@ class ViewController: UIViewController {
         textField.inputAccessoryView = toolbar
         textField.text = "지역 전체"
         textField.font = UIFont.systemFont(ofSize: 15)
-        textField.textColor = .gray
         textField.backgroundColor = .white
         textField.tintColor = .clear
         return textField
@@ -116,7 +114,7 @@ class ViewController: UIViewController {
     lazy var downImage2: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "chevron.down")!
-        imageView.tintColor = .gray
+        imageView.tintColor = .black
         return imageView
     }()
     
@@ -149,9 +147,46 @@ class ViewController: UIViewController {
         return pickerView
     }()
     
+    lazy var searchView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    lazy var searchTextFieldView: UIView = {
+        let view = UIView()
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.black.cgColor
+        view.layer.cornerRadius = 10
+        return view
+    }()
+    
+    lazy var searchTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "검색어를 입력하세요."
+        return textField
+    }()
+    
+    lazy var searchCancelButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "x.circle.fill"), for: .normal)
+        button.addTarget(self, action: #selector(searchCancelButtonClicked), for: .touchUpInside)
+        button.tintColor = .gray1
+        return button
+    }()
+    
+    lazy var searchButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "magnifyingglass"), for: .normal)
+        button.addTarget(self, action: #selector(searchButtonClicked), for: .touchUpInside)
+        button.tintColor = .black
+        return button
+    }()
+    
     lazy var addressView: UIView = {
         let view = UIView()
-        view.backgroundColor = .gray
+        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.layer.borderWidth = 1
         return view
     }()
     
@@ -187,7 +222,7 @@ class ViewController: UIViewController {
     }
     
     func setupSubView() {
-        view.backgroundColor = .lightGray
+        view.backgroundColor = .gray1
         
         view.addSubview(collectionView)
         view.addSubview(pageControl)
@@ -199,6 +234,12 @@ class ViewController: UIViewController {
         stackView.addArrangedSubview(districtView)
         districtView.addSubview(districtTextField)
         districtView.addSubview(downImage2)
+        
+        view.addSubview(searchView)
+        searchView.addSubview(searchTextFieldView)
+        searchTextFieldView.addSubview(searchTextField)
+        searchTextFieldView.addSubview(searchCancelButton)
+        searchTextFieldView.addSubview(searchButton)
         
         view.addSubview(addressView)
         addressView.addSubview(addressImage)
@@ -241,8 +282,36 @@ class ViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(8)
         }
         
+        searchView.snp.makeConstraints {
+            $0.top.equalTo(stackView.snp.bottom).offset(1)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(80)
+        }
+        
+        searchTextFieldView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(25)
+            $0.height.equalTo(50)
+        }
+        
+        searchTextField.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(15)
+        }
+        
+        searchCancelButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(searchTextField.snp.trailing).inset(5)
+        }
+        
+        searchButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(searchCancelButton.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().inset(15)
+        }
+        
         addressView.snp.makeConstraints {
-            $0.top.equalTo(stackView.snp.bottom).inset(2)
+            $0.top.equalTo(searchView.snp.bottom).offset(1)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(50)
         }
@@ -253,9 +322,13 @@ class ViewController: UIViewController {
         }
         
         addressLabel.snp.makeConstraints {
-            $0.leading.equalTo(addressImage.snp.trailing)
+            $0.leading.equalTo(addressImage.snp.trailing).offset(5)
             $0.centerY.equalToSuperview()
         }
+        
+    }
+    
+    @objc func backButtonClicked() {
         
     }
     
@@ -264,7 +337,11 @@ class ViewController: UIViewController {
         districtTextField.resignFirstResponder()
     }
     
-    @objc func backButtonClicked() {
+    @objc func searchCancelButtonClicked() {
+        
+    }
+    
+    @objc func searchButtonClicked() {
         
     }
     
