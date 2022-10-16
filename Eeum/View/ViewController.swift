@@ -16,9 +16,11 @@ class ViewController: UIViewController {
     private let categorys: [String] = ["업종 전체","카페/디저트", "외식/레스토랑", "여행/체험", "스포츠/레저"]
     private let districts: [String] = ["지역 전체", "중구", "동구", "서구"]
     
-    private var storeData: [Store] = [
+    private var stores: [Store] = [
         Store(category: .cafe, district: .junggu, discount: "3% 할인", cashback: false, name: "LIGHT HOUSE", address: "인천시 중구 참외전로 174번길 8-1", longtitude: 126.635135, latitude: 37.4719620),
-        Store(category: .cafe, district: .seogu, discount: "1% 할인", cashback: true, name: "카페.경선비", address: "인천시 서구 이름3로 220,상가1동 102호", longtitude: 126.715834, latitude: 37.5887730)
+        Store(category: .cafe, district: .seogu, discount: "1% 할인", cashback: true, name: "카페.경선비", address: "인천시 서구 이름3로 220,상가1동 102호", longtitude: 126.715834, latitude: 37.5887730),
+        Store(category: .restorant, district: .junggu, discount: "1% 할인", cashback: true, name: "본가삼치", address: "인천광역시 중구 우현로67번길 49, 1층(전동)", longtitude: 126.628855, latitude: 37.4754022),
+        Store(category: .restorant, district: .junggu, discount: "1% 할인", cashback: true, name: "본가삼치", address: "인천광역시 중구 우현로67번길 49, 1층(전동)", longtitude: 126.628855, latitude: 37.4754022)
     ]
     
     lazy var backButton = UIBarButtonItem(
@@ -34,14 +36,10 @@ class ViewController: UIViewController {
         action: nil)
     
     lazy var scrollView: UIScrollView = {
-       let scrollView = UIScrollView()
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
         scrollView.backgroundColor = .gray1
-       return scrollView
-    }()
-    
-    lazy var bannerView: UIView = {
-        let view = UIView()
-        return view
+        return scrollView
     }()
     
     lazy var collectionView: UICollectionView = {
@@ -229,7 +227,7 @@ class ViewController: UIViewController {
     
     lazy var resultCountLabel: UILabel = {
         let label = UILabel()
-        label.text = " 5784 "
+        label.text = " \(stores.count) "
         label.textColor = .white
         label.font = UIFont.boldSystemFont(ofSize: 15)
         label.backgroundColor = .red
@@ -257,6 +255,15 @@ class ViewController: UIViewController {
         return toggle
     }()
     
+    lazy var tableView: UITableView = {
+        let tableView: UITableView = UITableView()
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.isScrollEnabled = false
+        tableView.register(StoreCell.classForCoder(), forCellReuseIdentifier: "StoreCell")
+        return tableView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -278,9 +285,8 @@ class ViewController: UIViewController {
     func setupSubView() {
         view.addSubview(scrollView)
         
-        scrollView.addSubview(bannerView)
-        bannerView.addSubview(collectionView)
-        bannerView.addSubview(pageControl)
+        scrollView.addSubview(collectionView)
+        scrollView.addSubview(pageControl)
         
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(categoryView)
@@ -306,19 +312,17 @@ class ViewController: UIViewController {
         resultView.addSubview(cashbackSwitch)
         resultView.addSubview(cashbackLabel)
         
-        scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.trailing.bottom.equalToSuperview()
-        }
+        scrollView.addSubview(tableView)
         
-        bannerView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.leading.trailing.equalTo(view)
-            $0.height.equalTo(150)
+        scrollView.snp.makeConstraints {
+            $0.top.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalToSuperview()
         }
         
         collectionView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalTo(view)
+            $0.height.equalTo(150)
         }
         
         pageControl.snp.makeConstraints {
@@ -421,6 +425,12 @@ class ViewController: UIViewController {
             $0.trailing.equalTo(cashbackSwitch.snp.leading).offset(-5)
             $0.centerY.equalToSuperview()
         }
+        
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(resultView.snp.bottom).offset(1)
+            $0.leading.trailing.equalTo(view)
+            $0.bottom.equalTo(view)
+        }
     }
     
     @objc func backButtonClicked() {
@@ -519,5 +529,21 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         } else {
             districtTextField.text = districts[row]
         }
+    }
+}
+
+extension ViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        stores.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "StoreCell", for: indexPath) as! StoreCell
+        cell.configure(with: stores[indexPath.row])
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        150
     }
 }

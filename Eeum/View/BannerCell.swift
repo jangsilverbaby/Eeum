@@ -24,7 +24,7 @@ class BannerCell: UICollectionViewCell {
     }
     
     func setupSubView() {
-        self.contentView.addSubview(imageView)
+        contentView.addSubview(imageView)
         
         imageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
