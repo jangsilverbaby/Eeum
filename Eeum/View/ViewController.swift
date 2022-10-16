@@ -322,7 +322,7 @@ class ViewController: UIViewController {
         collectionView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalTo(view)
-            $0.height.equalTo(150)
+            $0.height.equalTo(200)
         }
         
         pageControl.snp.makeConstraints {
@@ -440,6 +440,8 @@ class ViewController: UIViewController {
     @objc func toolbarDoneButtonClicked() {
         categoryTextField.resignFirstResponder()
         districtTextField.resignFirstResponder()
+        
+        
     }
     
     @objc func searchCancelButtonClicked() {
@@ -452,7 +454,7 @@ class ViewController: UIViewController {
     
 }
 
-extension ViewController:UIScrollViewDelegate {
+extension ViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.frame.size.width != 0 {
             let value = (scrollView.contentOffset.x / scrollView.frame.width)
@@ -539,6 +541,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoreCell", for: indexPath) as! StoreCell
+        cell.selectionStyle = .none
         cell.configure(with: stores[indexPath.row])
         return cell
     }
