@@ -214,6 +214,49 @@ class ViewController: UIViewController {
         return label
     }()
     
+    lazy var resultView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    lazy var resultLabel: UILabel = {
+        let label = UILabel()
+        label.text = "검색결과"
+        label.font = UIFont.systemFont(ofSize: 15)
+        return label
+    }()
+    
+    lazy var resultCountLabel: UILabel = {
+        let label = UILabel()
+        label.text = " 5784 "
+        label.textColor = .white
+        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.backgroundColor = .red
+        label.layer.borderWidth = 2
+        label.layer.borderColor = UIColor.red.cgColor
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 8
+        return label
+    }()
+    
+    lazy var cashbackLabel: UILabel = {
+        let label = UILabel()
+        label.text = "10% 캐쉬백 가맹점"
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 12)
+        return label
+    }()
+    
+    lazy var cashbackSwitch: UISwitch = {
+        let toggle = UISwitch()
+        toggle.tintColor = .lightGray
+        toggle.layer.cornerRadius = toggle.frame.height / 2
+        toggle.backgroundColor = .lightGray
+        toggle.onTintColor = .yellow
+        return toggle
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -256,6 +299,12 @@ class ViewController: UIViewController {
         scrollView.addSubview(addressView)
         addressView.addSubview(addressImage)
         addressView.addSubview(addressLabel)
+        
+        scrollView.addSubview(resultView)
+        resultView.addSubview(resultLabel)
+        resultView.addSubview(resultCountLabel)
+        resultView.addSubview(cashbackSwitch)
+        resultView.addSubview(cashbackLabel)
         
         scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -347,6 +396,31 @@ class ViewController: UIViewController {
             $0.centerY.equalToSuperview()
         }
         
+        resultView.snp.makeConstraints {
+            $0.top.equalTo(addressView.snp.bottom).offset(1)
+            $0.leading.trailing.equalTo(view)
+            $0.height.equalTo(50)
+        }
+        
+        resultLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(15)
+            $0.centerY.equalToSuperview()
+        }
+        
+        resultCountLabel.snp.makeConstraints {
+            $0.leading.equalTo(resultLabel.snp.trailing).offset(5)
+            $0.centerY.equalToSuperview()
+        }
+        
+        cashbackSwitch.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(15)
+            $0.centerY.equalToSuperview()
+        }
+        
+        cashbackLabel.snp.makeConstraints {
+            $0.trailing.equalTo(cashbackSwitch.snp.leading).offset(-5)
+            $0.centerY.equalToSuperview()
+        }
     }
     
     @objc func backButtonClicked() {
