@@ -7,7 +7,7 @@
 
 struct Store {
     var category: Category
-    var district: District
+    var locality: Locality
     var discount: String
     var cashback: Bool
     var name: String
@@ -23,7 +23,7 @@ enum Category {
     case sports
 }
 
-enum District {
+enum Locality {
     case junggu
     case donggu
     case seogu

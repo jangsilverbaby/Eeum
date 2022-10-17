@@ -14,14 +14,14 @@ class ViewController: UIViewController {
     let banners: [String] = ["banner1.jpg", "banner2.jpg"]
     
     let categorys: [String] = ["업종 전체","카페/디저트", "외식/레스토랑", "여행/체험", "스포츠/레저"]
-    let districts: [String] = ["지역 전체", "중구", "동구", "서구"]
+    let localitys: [String] = ["지역 전체", "중구", "동구", "서구"]
     
     let stores: [Store] = [
-        Store(category: .cafe, district: .junggu, discount: "3% 할인", cashback: false, name: "LIGHT HOUSE", address: "인천시 중구 참외전로 174번길 8-1", longtitude: 126.635135, latitude: 37.4719620),
-        Store(category: .cafe, district: .seogu, discount: "1% 할인", cashback: true, name: "카페.경선비", address: "인천시 서구 이름3로 220,상가1동 102호", longtitude: 126.715834, latitude: 37.5887730),
-        Store(category: .restorant, district: .junggu, discount: "1% 할인", cashback: true, name: "본가삼치", address: "인천광역시 중구 우현로67번길 49, 1층(전동)", longtitude: 126.628855, latitude: 37.4754022),
-        Store(category: .tour, district: .seogu, discount: "3% 할인", cashback: true, name: "낭만물고기", address: "인천광역시 서구 검단로 492 (마전동, 세훈빌딩) 지하1층", longtitude: 126.658890, latitude: 37.6022084),
-        Store(category: .restorant, district: .donggu, discount: "배달e음 5% 할인", cashback: false, name: "우리집 송림점", address: "인천광역시 동구 방축로191번길 21-2, 1층(송림동)", longtitude: 126.666332, latitude: 37.4804068)
+        Store(category: .cafe, locality: .junggu, discount: "3% 할인", cashback: false, name: "LIGHT HOUSE", address: "인천시 중구 참외전로 174번길 8-1", longtitude: 126.635135, latitude: 37.4719620),
+        Store(category: .cafe, locality: .seogu, discount: "1% 할인", cashback: true, name: "카페.경선비", address: "인천시 서구 이름3로 220,상가1동 102호", longtitude: 126.715834, latitude: 37.5887730),
+        Store(category: .restorant, locality: .junggu, discount: "1% 할인", cashback: true, name: "본가삼치", address: "인천광역시 중구 우현로67번길 49, 1층(전동)", longtitude: 126.628855, latitude: 37.4754022),
+        Store(category: .tour, locality: .seogu, discount: "3% 할인", cashback: true, name: "낭만물고기", address: "인천광역시 서구 검단로 492 (마전동, 세훈빌딩) 지하1층", longtitude: 126.658890, latitude: 37.6022084),
+        Store(category: .restorant, locality: .donggu, discount: "배달e음 5% 할인", cashback: false, name: "우리집 송림점", address: "인천광역시 동구 방축로191번길 21-2, 1층(송림동)", longtitude: 126.666332, latitude: 37.4804068)
     ]
     
     var filteredStores: [Store] = []
@@ -107,15 +107,15 @@ class ViewController: UIViewController {
         return imageView
     }()
     
-    lazy var districtView: UIView = {
+    lazy var localityView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         return view
     }()
     
-    lazy var districtTextField: UITextField = {
+    lazy var localityTextField: UITextField = {
         let textField = PaddedTextField()
-        textField.inputView = districtPickerView
+        textField.inputView = localityPickerView
         textField.inputAccessoryView = toolbar
         textField.text = "지역 전체"
         textField.font = UIFont.systemFont(ofSize: 15)
@@ -152,7 +152,7 @@ class ViewController: UIViewController {
         return pickerView
     }()
     
-    lazy var districtPickerView: UIPickerView = {
+    lazy var localityPickerView: UIPickerView = {
         let pickerView = UIPickerView()
         pickerView.tag = 2
         pickerView.delegate = self as UIPickerViewDelegate
@@ -293,9 +293,9 @@ class ViewController: UIViewController {
         stackView.addArrangedSubview(categoryView)
         categoryView.addSubview(categoryTextField)
         categoryView.addSubview(downImage1)
-        stackView.addArrangedSubview(districtView)
-        districtView.addSubview(districtTextField)
-        districtView.addSubview(downImage2)
+        stackView.addArrangedSubview(localityView)
+        localityView.addSubview(localityTextField)
+        localityView.addSubview(downImage2)
         
         scrollView.addSubview(searchView)
         searchView.addSubview(searchTextFieldView)
@@ -346,7 +346,7 @@ class ViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(8)
         }
         
-        districtTextField.snp.makeConstraints {
+        localityTextField.snp.makeConstraints {
             $0.top.bottom.leading.trailing.equalToSuperview()
             $0.height.equalTo(50)
         }
@@ -438,10 +438,10 @@ class ViewController: UIViewController {
     
     @objc func toolbarDoneButtonClicked() {
         categoryTextField.resignFirstResponder()
-        districtTextField.resignFirstResponder()
+        localityTextField.resignFirstResponder()
         
         var category: Category? = nil
-        var district: District? = nil
+        var locality: Locality? = nil
 
         switch categoryTextField.text {
         case categorys[1]:
@@ -453,31 +453,31 @@ class ViewController: UIViewController {
         case categorys[4]:
             category = .sports
         default:
-            district = nil
+            locality = nil
         }
         
-        switch districtTextField.text {
-        case districts[1]:
-            district = .junggu
-        case districts[2]:
-            district = .donggu
-        case districts[3]:
-            district = .seogu
+        switch localityTextField.text {
+        case localitys[1]:
+            locality = .junggu
+        case localitys[2]:
+            locality = .donggu
+        case localitys[3]:
+            locality = .seogu
         default:
-            district = nil
+            locality = nil
         }
         
-        if category != nil && district != nil {
+        if category != nil && locality != nil {
             self.filteredStores.removeAll()
-            self.filteredStores = self.stores.filter { $0.category == category && $0.district == district }
+            self.filteredStores = self.stores.filter { $0.category == category && $0.locality == locality }
             dump(filteredStores)
             isFiltering = true
-        } else if category == nil && district != nil {
+        } else if category == nil && locality != nil {
             self.filteredStores.removeAll()
-            self.filteredStores = self.stores.filter { $0.district == district }
+            self.filteredStores = self.stores.filter { $0.locality == locality }
             dump(filteredStores)
             isFiltering = true
-        } else if category != nil && district == nil {
+        } else if category != nil && locality == nil {
             self.filteredStores.removeAll()
             self.filteredStores = self.stores.filter { $0.category == category }
             dump(filteredStores)
@@ -571,7 +571,7 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         if pickerView.tag == 1 {
             return categorys.count
         } else {
-            return districts.count
+            return localitys.count
         }
     }
     
@@ -579,7 +579,7 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         if pickerView.tag == 1 {
             return categorys[row]
         } else {
-            return districts[row]
+            return localitys[row]
         }
     }
     
@@ -587,7 +587,7 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         if pickerView.tag == 1 {
             categoryTextField.text = categorys[row]
         } else {
-            districtTextField.text = districts[row]
+            localityTextField.text = localitys[row]
         }
     }
 }
