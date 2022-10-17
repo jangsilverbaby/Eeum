@@ -24,19 +24,7 @@ class ViewController: UIViewController {
     ]
     
     var filteredStores: [Store] = []
-    
-    var categoryFilter = false
-    var districtFilter = false
-    var searchFilter = false
-    var cachbackFilter = false
-    
-    var isFiltering: Bool {
-        var categoryFilter = self.categoryFilter
-        var districtFilter = self.districtFilter
-        var searchFilter = self.searchFilter
-        var cachbackFilter = self.cachbackFilter
-        return categoryFilter || districtFilter || searchFilter || cachbackFilter
-    }
+    var isFiltering = false
     
     lazy var backButton = UIBarButtonItem(
         image: UIImage(systemName: "chevron.left"),
@@ -450,7 +438,54 @@ class ViewController: UIViewController {
         categoryTextField.resignFirstResponder()
         districtTextField.resignFirstResponder()
         
+        var category: Category? = nil
+        var district: District? = nil
+
+        switch categoryTextField.text {
+        case categorys[1]:
+            category = .cafe
+        case categorys[2]:
+            category = .restorant
+        case categorys[3]:
+            category = .tour
+        case categorys[4]:
+            category = .sports
+        default:
+            district = nil
+        }
         
+        switch districtTextField.text {
+        case districts[1]:
+            district = .junggu
+        case districts[2]:
+            district = .donggu
+        case districts[3]:
+            district = .seogu
+        default:
+            district = nil
+        }
+        
+        if category != nil && district != nil {
+            self.filteredStores.removeAll()
+            self.filteredStores = self.stores.filter { $0.category == category && $0.district == district }
+            dump(filteredStores)
+            isFiltering = true
+        } else if category == nil && district != nil {
+            self.filteredStores.removeAll()
+            self.filteredStores = self.stores.filter { $0.district == district }
+            dump(filteredStores)
+            isFiltering = true
+        } else if category != nil && district == nil {
+            self.filteredStores.removeAll()
+            self.filteredStores = self.stores.filter { $0.category == category }
+            dump(filteredStores)
+            isFiltering = true
+        } else {
+            isFiltering = false
+        }
+        
+        self.reloadResultCount()
+        self.tableView.reloadData()
     }
     
     @objc func searchButtonClicked() {
@@ -556,10 +591,9 @@ extension ViewController: UISearchBarDelegate {
                 self.filteredStores = self.stores.filter { $0.name.lowercased().hasPrefix(searchTerm.lowercased()) }
                 dump(filteredStores)
             }
-            
-            self.searchFilter = true
+            isFiltering = true
         } else {
-            searchFilter = false
+            isFiltering = false
         }
         
         self.reloadResultCount()
