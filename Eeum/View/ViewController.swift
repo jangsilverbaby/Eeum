@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     
     var filteredStores: [Store] = []
     
-    var isSearchBarHasText = false
+    var isFiltering = false
     
     lazy var backButton = UIBarButtonItem(
         image: UIImage(systemName: "chevron.left"),
@@ -427,6 +427,14 @@ class ViewController: UIViewController {
         }
     }
     
+    func reloadResultCount() {
+        if isFiltering {
+            resultCountLabel.text = " \(filteredStores.count) "
+        } else {
+            resultCountLabel.text = " \(stores.count) "
+        }
+    }
+    
     @objc func toolbarDoneButtonClicked() {
         categoryTextField.resignFirstResponder()
         districtTextField.resignFirstResponder()
@@ -529,15 +537,16 @@ extension ViewController: UISearchBarDelegate {
         view.endEditing(true)
         filteredStores.removeAll()
         if let searchTerm = searchBar.text, searchTerm.isEmpty == false {
-            isSearchBarHasText = true
+            isFiltering = true
 
             self.filteredStores = self.stores.filter { $0.name.lowercased().hasPrefix(searchTerm) }
             dump(filteredStores)
             
         } else {
-            isSearchBarHasText = false
+            isFiltering = false
         }
-
+        
+        self.reloadResultCount()
         self.tableView.reloadData()
     }
 }
@@ -545,13 +554,13 @@ extension ViewController: UISearchBarDelegate {
 //MARK: - UITableView
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.isSearchBarHasText ? self.filteredStores.count : self.stores.count
+        self.isFiltering ? self.filteredStores.count : self.stores.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoreCell", for: indexPath) as! StoreCell
         cell.selectionStyle = .none
-        if self.isSearchBarHasText {
+        if self.isFiltering {
             cell.configure(with: filteredStores[indexPath.row])
         } else {
             cell.configure(with: stores[indexPath.row])
