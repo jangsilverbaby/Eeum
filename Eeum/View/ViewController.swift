@@ -25,7 +25,18 @@ class ViewController: UIViewController {
     
     var filteredStores: [Store] = []
     
-    var isFiltering = false
+    var categoryFilter = false
+    var districtFilter = false
+    var searchFilter = false
+    var cachbackFilter = false
+    
+    var isFiltering: Bool {
+        var categoryFilter = self.categoryFilter
+        var districtFilter = self.districtFilter
+        var searchFilter = self.searchFilter
+        var cachbackFilter = self.cachbackFilter
+        return categoryFilter || districtFilter || searchFilter || cachbackFilter
+    }
     
     lazy var backButton = UIBarButtonItem(
         image: UIImage(systemName: "chevron.left"),
@@ -535,15 +546,20 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 extension ViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         view.endEditing(true)
-        filteredStores.removeAll()
-        if let searchTerm = searchBar.text, searchTerm.isEmpty == false {
-            isFiltering = true
 
-            self.filteredStores = self.stores.filter { $0.name.lowercased().hasPrefix(searchTerm) }
-            dump(filteredStores)
+        if let searchTerm = searchBar.text, searchTerm.isEmpty == false {
+            if isFiltering {
+                self.filteredStores = self.filteredStores.filter { $0.name.lowercased().hasPrefix(searchTerm) }
+                dump(filteredStores)
+            } else {
+                self.filteredStores.removeAll()
+                self.filteredStores = self.stores.filter { $0.name.lowercased().hasPrefix(searchTerm) }
+                dump(filteredStores)
+            }
             
+            self.searchFilter = true
         } else {
-            isFiltering = false
+            searchFilter = false
         }
         
         self.reloadResultCount()
