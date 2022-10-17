@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MapKit
 import SnapKit
 
 class ViewController: UIViewController {
@@ -209,6 +210,16 @@ class ViewController: UIViewController {
         let label = UILabel()
         label.text = "address~~"
         return label
+    }()
+    
+    lazy var locationManager: CLLocationManager = {
+        let locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.distanceFilter = kCLDistanceFilterNone
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        return locationManager
     }()
     
     lazy var resultView: UIView = {
@@ -453,7 +464,7 @@ class ViewController: UIViewController {
         case categorys[4]:
             category = .sports
         default:
-            locality = nil
+            category = nil
         }
         
         switch localityTextField.text {
