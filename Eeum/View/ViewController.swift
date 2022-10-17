@@ -20,7 +20,8 @@ class ViewController: UIViewController {
         Store(category: .cafe, district: .junggu, discount: "3% 할인", cashback: false, name: "LIGHT HOUSE", address: "인천시 중구 참외전로 174번길 8-1", longtitude: 126.635135, latitude: 37.4719620),
         Store(category: .cafe, district: .seogu, discount: "1% 할인", cashback: true, name: "카페.경선비", address: "인천시 서구 이름3로 220,상가1동 102호", longtitude: 126.715834, latitude: 37.5887730),
         Store(category: .restorant, district: .junggu, discount: "1% 할인", cashback: true, name: "본가삼치", address: "인천광역시 중구 우현로67번길 49, 1층(전동)", longtitude: 126.628855, latitude: 37.4754022),
-        Store(category: .restorant, district: .junggu, discount: "1% 할인", cashback: true, name: "본가삼치", address: "인천광역시 중구 우현로67번길 49, 1층(전동)", longtitude: 126.628855, latitude: 37.4754022)
+        Store(category: .tour, district: .seogu, discount: "3% 할인", cashback: true, name: "낭만물고기", address: "인천광역시 서구 검단로 492 (마전동, 세훈빌딩) 지하1층", longtitude: 126.658890, latitude: 37.6022084),
+        Store(category: .restorant, district: .donggu, discount: "배달e음 5% 할인", cashback: false, name: "우리집 송림점", address: "인천광역시 동구 방축로191번길 21-2, 1층(송림동)", longtitude: 126.666332, latitude: 37.4804068)
     ]
     
     var filteredStores: [Store] = []
@@ -250,6 +251,7 @@ class ViewController: UIViewController {
         toggle.layer.cornerRadius = toggle.frame.height / 2
         toggle.backgroundColor = .lightGray
         toggle.onTintColor = .yellow
+        toggle.addTarget(self, action: #selector(switchClicked), for: .touchUpInside)
         return toggle
     }()
     
@@ -492,6 +494,19 @@ class ViewController: UIViewController {
         self.searchBarSearchButtonClicked(self.searchBar)
     }
     
+    @objc func switchClicked() {
+        if cashbackSwitch.isOn {
+            self.filteredStores.removeAll()
+            self.filteredStores = self.stores.filter { $0.cashback == true }
+            dump(filteredStores)
+            isFiltering = true
+        } else {
+            isFiltering = false
+        }
+        
+        self.reloadResultCount()
+        self.tableView.reloadData()
+    }
 }
 
 //MARK: - Banner UIScrollView

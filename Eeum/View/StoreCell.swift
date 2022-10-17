@@ -139,6 +139,8 @@ class StoreCell: UITableViewCell {
         discountLabel.text = " \(store.discount) "
         if store.cashback {
             cashbackLabel.isHidden = false
+        } else {
+            cashbackLabel.isHidden = true
         }
         nameLabel.text = store.name
         addressLabel.text = store.address
