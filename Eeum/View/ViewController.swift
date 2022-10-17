@@ -11,23 +11,27 @@ import SnapKit
 class ViewController: UIViewController {
     
     var nowPage = 0
-    private var banners: [String] = ["banner1.jpg", "banner2.jpg"]
+    let banners: [String] = ["banner1.jpg", "banner2.jpg"]
     
-    private let categorys: [String] = ["업종 전체","카페/디저트", "외식/레스토랑", "여행/체험", "스포츠/레저"]
-    private let districts: [String] = ["지역 전체", "중구", "동구", "서구"]
+    let categorys: [String] = ["업종 전체","카페/디저트", "외식/레스토랑", "여행/체험", "스포츠/레저"]
+    let districts: [String] = ["지역 전체", "중구", "동구", "서구"]
     
-    private var stores: [Store] = [
+    let stores: [Store] = [
         Store(category: .cafe, district: .junggu, discount: "3% 할인", cashback: false, name: "LIGHT HOUSE", address: "인천시 중구 참외전로 174번길 8-1", longtitude: 126.635135, latitude: 37.4719620),
         Store(category: .cafe, district: .seogu, discount: "1% 할인", cashback: true, name: "카페.경선비", address: "인천시 서구 이름3로 220,상가1동 102호", longtitude: 126.715834, latitude: 37.5887730),
         Store(category: .restorant, district: .junggu, discount: "1% 할인", cashback: true, name: "본가삼치", address: "인천광역시 중구 우현로67번길 49, 1층(전동)", longtitude: 126.628855, latitude: 37.4754022),
         Store(category: .restorant, district: .junggu, discount: "1% 할인", cashback: true, name: "본가삼치", address: "인천광역시 중구 우현로67번길 49, 1층(전동)", longtitude: 126.628855, latitude: 37.4754022)
     ]
     
+    var filteredStores: [Store] = []
+    
+    var isSearchBarHasText = false
+    
     lazy var backButton = UIBarButtonItem(
         image: UIImage(systemName: "chevron.left"),
         style: .plain,
         target: self,
-        action: #selector(backButtonClicked))
+        action: nil)
     
     lazy var menuButton =  UIBarButtonItem(
         image: UIImage(systemName: "line.3.horizontal"),
@@ -170,18 +174,13 @@ class ViewController: UIViewController {
         return view
     }()
     
-    lazy var searchTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "검색어를 입력하세요."
-        return textField
-    }()
-    
-    lazy var searchCancelButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "x.circle.fill"), for: .normal)
-        button.addTarget(self, action: #selector(searchCancelButtonClicked), for: .touchUpInside)
-        button.tintColor = .gray1
-        return button
+    lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.setImage(UIImage(), for: .search, state: .normal)
+        searchBar.searchTextField.backgroundColor = .clear
+        searchBar.placeholder = "검색어를 입력하세요."
+        searchBar.delegate = self
+        return searchBar
     }()
     
     lazy var searchButton: UIButton = {
@@ -266,6 +265,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboard()
         
         setupNavigation()
         setupSubView()
@@ -298,8 +298,7 @@ class ViewController: UIViewController {
         
         scrollView.addSubview(searchView)
         searchView.addSubview(searchTextFieldView)
-        searchTextFieldView.addSubview(searchTextField)
-        searchTextFieldView.addSubview(searchCancelButton)
+        searchTextFieldView.addSubview(searchBar)
         searchTextFieldView.addSubview(searchButton)
         
         scrollView.addSubview(addressView)
@@ -368,19 +367,14 @@ class ViewController: UIViewController {
             $0.height.equalTo(50)
         }
         
-        searchTextField.snp.makeConstraints {
+        searchBar.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().inset(15)
-        }
-        
-        searchCancelButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalTo(searchTextField.snp.trailing).inset(5)
+            $0.leading.equalToSuperview()
         }
         
         searchButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalTo(searchCancelButton.snp.trailing).offset(8)
+            $0.leading.equalTo(searchBar.snp.trailing).offset(8)
             $0.trailing.equalToSuperview().inset(15)
         }
         
@@ -433,10 +427,6 @@ class ViewController: UIViewController {
         }
     }
     
-    @objc func backButtonClicked() {
-        
-    }
-    
     @objc func toolbarDoneButtonClicked() {
         categoryTextField.resignFirstResponder()
         districtTextField.resignFirstResponder()
@@ -444,16 +434,13 @@ class ViewController: UIViewController {
         
     }
     
-    @objc func searchCancelButtonClicked() {
-        
-    }
-    
     @objc func searchButtonClicked() {
-        
+        self.searchBarSearchButtonClicked(self.searchBar)
     }
     
 }
 
+//MARK: - Banner UIScrollView
 extension ViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.frame.size.width != 0 {
@@ -463,6 +450,7 @@ extension ViewController: UIScrollViewDelegate {
     }
 }
 
+//MARK: - UICollectionView
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         pageControl.numberOfPages = banners.count
@@ -504,6 +492,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
 }
 
+//MARK: - UIPickerView
 extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         1
@@ -534,15 +523,39 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
 }
 
+//MARK: - UISearchBar
+extension ViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        view.endEditing(true)
+        filteredStores.removeAll()
+        if let searchTerm = searchBar.text, searchTerm.isEmpty == false {
+            isSearchBarHasText = true
+
+            self.filteredStores = self.stores.filter { $0.name.lowercased().hasPrefix(searchTerm) }
+            dump(filteredStores)
+            
+        } else {
+            isSearchBarHasText = false
+        }
+
+        self.tableView.reloadData()
+    }
+}
+
+//MARK: - UITableView
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        stores.count
+        self.isSearchBarHasText ? self.filteredStores.count : self.stores.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoreCell", for: indexPath) as! StoreCell
         cell.selectionStyle = .none
-        cell.configure(with: stores[indexPath.row])
+        if self.isSearchBarHasText {
+            cell.configure(with: filteredStores[indexPath.row])
+        } else {
+            cell.configure(with: stores[indexPath.row])
+        }
         return cell
     }
     
