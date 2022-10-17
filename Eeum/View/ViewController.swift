@@ -266,7 +266,7 @@ class ViewController: UIViewController {
     }()
     
     lazy var tableView: UITableView = {
-        let tableView: UITableView = UITableView()
+        let tableView = FlexibleTableView()
         tableView.dataSource = self
         tableView.delegate = self
         tableView.isScrollEnabled = false
@@ -434,7 +434,7 @@ class ViewController: UIViewController {
         tableView.snp.makeConstraints {
             $0.top.equalTo(resultView.snp.bottom).offset(1)
             $0.leading.trailing.equalTo(view)
-            $0.bottom.equalTo(view)
+            $0.bottom.equalToSuperview()
         }
     }
     
@@ -549,11 +549,11 @@ extension ViewController: UISearchBarDelegate {
 
         if let searchTerm = searchBar.text, searchTerm.isEmpty == false {
             if isFiltering {
-                self.filteredStores = self.filteredStores.filter { $0.name.lowercased().hasPrefix(searchTerm) }
+                self.filteredStores = self.filteredStores.filter { $0.name.lowercased().hasPrefix(searchTerm.lowercased()) }
                 dump(filteredStores)
             } else {
                 self.filteredStores.removeAll()
-                self.filteredStores = self.stores.filter { $0.name.lowercased().hasPrefix(searchTerm) }
+                self.filteredStores = self.stores.filter { $0.name.lowercased().hasPrefix(searchTerm.lowercased()) }
                 dump(filteredStores)
             }
             
