@@ -12,7 +12,7 @@ struct Store {
     var cashback: Bool
     var name: String
     var address: String
-    var longtitude: Double
+    var longitude: Double
     var latitude: Double
 }
 

@@ -7,8 +7,11 @@
 
 import UIKit
 import SnapKit
+import CoreLocation
 
 class StoreCell: UITableViewCell {
+    
+    var myLocation: CLLocation?
     
     lazy var storeView: UIView = {
         let view = UIView()
@@ -74,9 +77,24 @@ class StoreCell: UITableViewCell {
         return imageView
     }()
     
+    lazy var locationManager: CLLocationManager = {
+        let locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.distanceFilter = kCLDistanceFilterNone
+        // 배터리에 맞게 권장되는 최적의 정확도
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        // 포그라운드일 때 위치 추적 권한 요청
+        locationManager.requestWhenInUseAuthorization()
+        // 위치 업데이트
+        locationManager.startUpdatingLocation()
+        return locationManager
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupSubView()
+        
+        myLocation = locationManager.location
     }
     
     required init?(coder: NSCoder) {
@@ -144,5 +162,15 @@ class StoreCell: UITableViewCell {
         }
         nameLabel.text = store.name
         addressLabel.text = store.address
+        
+        guard let location = myLocation else { return }
+        
+        distanceLabel.text = "\(String(format: "%.1f",location.distance(from: CLLocation(latitude: store.latitude, longitude: store.longitude)) / 1000))km"
+    }
+}
+
+extension StoreCell: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
     }
 }
