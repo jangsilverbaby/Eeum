@@ -264,7 +264,7 @@ class ViewController: UIViewController {
         toggle.tintColor = .lightGray
         toggle.layer.cornerRadius = toggle.frame.height / 2
         toggle.backgroundColor = .lightGray
-        toggle.onTintColor = .yellow
+        toggle.onTintColor = .yellow1
         toggle.addTarget(self, action: #selector(switchClicked), for: .touchUpInside)
         return toggle
     }()
@@ -643,7 +643,7 @@ extension ViewController: UISearchBarDelegate {
     }
     
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        self.searchTextFieldView.layer.borderColor = UIColor.yellow.cgColor
+        self.searchTextFieldView.layer.borderColor = UIColor.yellow1?.cgColor
         return true
     }
     
