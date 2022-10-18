@@ -28,6 +28,9 @@ class ViewController: UIViewController {
     var filteredStores: [Store] = []
     var isFiltering = false
     
+    var mylatitude: CLLocationDegrees?
+    var mylongtitude: CLLocationDegrees?
+    
     lazy var backButton = UIBarButtonItem(
         image: UIImage(systemName: "chevron.left"),
         style: .plain,
@@ -199,16 +202,19 @@ class ViewController: UIViewController {
         return view
     }()
     
-    lazy var addressImage: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "scope")
-        imageView.tintColor = .black
-        return imageView
+    lazy var addressButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "scope"), for: .normal)
+        button.addTarget(self, action: #selector(addressButtonClicked), for: .touchUpInside)
+        button.tintColor = .black
+        return button
     }()
     
     lazy var addressLabel: UILabel = {
         let label = UILabel()
         label.text = "현재 위치"
+        label.font = .systemFont(ofSize: 12)
+        label.numberOfLines = 2
         return label
     }()
     
@@ -287,7 +293,7 @@ class ViewController: UIViewController {
         
         bannerTimer()
         
-        print("---", getAddress())
+        updateAddress()
     }
     
     func setupNavigation() {
@@ -319,7 +325,7 @@ class ViewController: UIViewController {
         searchTextFieldView.addSubview(searchButton)
         
         scrollView.addSubview(addressView)
-        addressView.addSubview(addressImage)
+        addressView.addSubview(addressButton)
         addressView.addSubview(addressLabel)
         
         scrollView.addSubview(resultView)
@@ -401,13 +407,13 @@ class ViewController: UIViewController {
             $0.height.equalTo(50)
         }
         
-        addressImage.snp.makeConstraints {
+        addressButton.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(15)
             $0.centerY.equalToSuperview()
         }
         
         addressLabel.snp.makeConstraints {
-            $0.leading.equalTo(addressImage.snp.trailing).offset(5)
+            $0.leading.equalTo(addressButton.snp.trailing).offset(5)
             $0.centerY.equalToSuperview()
         }
         
@@ -452,15 +458,19 @@ class ViewController: UIViewController {
         }
     }
     
-    func getAddress() -> String{
+    func updateAddress() {
+        guard let location = locationManager.location else { return }
         let geocoder = CLGeocoder()
-        let location = CLLocation(latitude: 37.576029, longitude: 126.976920)
-        var address = ""
-        print("---\(String(describing: location))")
+        let locale = Locale(identifier: "Ko-kr")
         
+        mylatitude = location.coordinate.latitude
+        mylongtitude = location.coordinate.longitude
         
-        
-        return address
+        geocoder.reverseGeocodeLocation(location, preferredLocale: locale) { placemarks, error in
+            if let placemark = placemarks?.first {
+                self.addressLabel.text = "\(placemark.administrativeArea ?? "") \(placemark.locality ?? "") \(placemark.subLocality ?? "") \(placemark.thoroughfare ?? "") \(placemark.name ?? "")"
+            }
+        }
     }
     
     @objc func toolbarDoneButtonClicked() {
@@ -469,7 +479,7 @@ class ViewController: UIViewController {
         
         var category: Category? = nil
         var locality: Locality? = nil
-
+        
         switch categoryTextField.text {
         case categorys[1]:
             category = .cafe
@@ -519,6 +529,10 @@ class ViewController: UIViewController {
     
     @objc func searchButtonClicked() {
         self.searchBarSearchButtonClicked(self.searchBar)
+    }
+    
+    @objc func addressButtonClicked() {
+        updateAddress()
     }
     
     @objc func switchClicked() {
@@ -623,7 +637,7 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 extension ViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         view.endEditing(true)
-
+        
         if let searchTerm = searchBar.text, searchTerm.isEmpty == false {
             if isFiltering {
                 self.filteredStores = self.filteredStores.filter { $0.name.lowercased().hasPrefix(searchTerm.lowercased()) }
