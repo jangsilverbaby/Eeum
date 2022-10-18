@@ -283,7 +283,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.hideKeyboard()
+        hideKeyboard()
         
         setupNavigation()
         setupSubView()
@@ -447,6 +447,12 @@ class ViewController: UIViewController {
         }
     }
     
+    func hideKeyboard() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self,
+            action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    
     func reloadResultCount() {
         if isFiltering {
             resultCountLabel.text = " \(filteredStores.count) "
@@ -465,6 +471,10 @@ class ViewController: UIViewController {
                 self.addressLabel.text = "\(placemark.administrativeArea ?? "") \(placemark.locality ?? "") \(placemark.subLocality ?? "") \(placemark.thoroughfare ?? "") \(placemark.name ?? "")"
             }
         }
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     @objc func toolbarDoneButtonClicked() {
