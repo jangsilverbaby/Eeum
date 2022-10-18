@@ -208,7 +208,7 @@ class ViewController: UIViewController {
     
     lazy var addressLabel: UILabel = {
         let label = UILabel()
-        label.text = "address~~"
+        label.text = "현재 위치"
         return label
     }()
     
@@ -216,8 +216,11 @@ class ViewController: UIViewController {
         let locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.distanceFilter = kCLDistanceFilterNone
+        // 배터리에 맞게 권장되는 최적의 정확도
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        // 포그라운드일 때 위치 추적 권한 요청
         locationManager.requestWhenInUseAuthorization()
+        // 위치 업데이트
         locationManager.startUpdatingLocation()
         return locationManager
     }()
@@ -283,6 +286,8 @@ class ViewController: UIViewController {
         setupSubView()
         
         bannerTimer()
+        
+        print("---", getAddress())
     }
     
     func setupNavigation() {
@@ -445,6 +450,17 @@ class ViewController: UIViewController {
         } else {
             resultCountLabel.text = " \(stores.count) "
         }
+    }
+    
+    func getAddress() -> String{
+        let geocoder = CLGeocoder()
+        let location = CLLocation(latitude: 37.576029, longitude: 126.976920)
+        var address = ""
+        print("---\(String(describing: location))")
+        
+        
+        
+        return address
     }
     
     @objc func toolbarDoneButtonClicked() {
@@ -624,6 +640,23 @@ extension ViewController: UISearchBarDelegate {
         
         self.reloadResultCount()
         self.tableView.reloadData()
+    }
+    
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        self.searchTextFieldView.layer.borderColor = UIColor.yellow.cgColor
+        return true
+    }
+    
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        self.searchTextFieldView.layer.borderColor = UIColor.black.cgColor
+        return true
+    }
+}
+
+//MARK: - CLLocationManager
+extension ViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error)
     }
 }
 
