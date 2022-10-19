@@ -17,6 +17,8 @@ class ViewController: UIViewController {
     let categorys: [String] = ["업종 전체","카페/디저트", "외식/레스토랑", "여행/체험", "스포츠/레저"]
     let localitys: [String] = ["지역 전체", "중구", "동구", "서구"]
     
+    var myLocation: CLLocation?
+    
     let stores: [Store] = [
         Store(category: .cafe, locality: .junggu, discount: "3% 할인", cashback: false, name: "LIGHT HOUSE", address: "인천시 중구 참외전로 174번길 8-1", longitude: 126.635135, latitude: 37.4719620),
         Store(category: .cafe, locality: .seogu, discount: "1% 할인", cashback: true, name: "카페.경선비", address: "인천시 서구 이름3로 220,상가1동 102호", longitude: 126.715834, latitude: 37.5887730),
@@ -235,7 +237,7 @@ class ViewController: UIViewController {
     
     lazy var addressLabel: UILabel = {
         let label = UILabel()
-        label.text = "현재 위치"
+        label.text = ""
         label.font = .systemFont(ofSize: 12)
         label.numberOfLines = 2
         return label
@@ -508,6 +510,7 @@ class ViewController: UIViewController {
     
     func updateAddress() {
         guard let location = locationManager.location else { return }
+        myLocation = location
         let geocoder = CLGeocoder()
         let locale = Locale(identifier: "Ko-kr")
         
@@ -729,6 +732,11 @@ extension ViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
     }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        self.updateAddress()
+        self.tableView.reloadData()
+    }
 }
 
 //MARK: - UITableView
@@ -741,9 +749,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoreCell", for: indexPath) as! StoreCell
         cell.selectionStyle = .none
         if self.isFiltering {
-            cell.configure(with: filteredStores[indexPath.row])
+            cell.configure(with: filteredStores[indexPath.row], location: myLocation)
         } else {
-            cell.configure(with: stores[indexPath.row])
+            cell.configure(with: stores[indexPath.row], location: myLocation)
         }
         return cell
     }

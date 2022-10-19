@@ -10,9 +10,7 @@ import SnapKit
 import CoreLocation
 
 class StoreCell: UITableViewCell {
-    
-    var myLocation: CLLocation?
-    
+
     lazy var storeView: UIView = {
         let view = UIView()
         view.layer.borderWidth = 1
@@ -65,7 +63,7 @@ class StoreCell: UITableViewCell {
     
     lazy var distanceLabel: UILabel = {
         let label = UILabel()
-        label.text = "거리!"
+        label.text = ""
         label.textColor = .gray2
         return label
     }()
@@ -77,24 +75,9 @@ class StoreCell: UITableViewCell {
         return imageView
     }()
     
-    lazy var locationManager: CLLocationManager = {
-        let locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.distanceFilter = kCLDistanceFilterNone
-        // 배터리에 맞게 권장되는 최적의 정확도
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        // 포그라운드일 때 위치 추적 권한 요청
-        locationManager.requestWhenInUseAuthorization()
-        // 위치 업데이트
-        locationManager.startUpdatingLocation()
-        return locationManager
-    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupSubView()
-        
-        myLocation = locationManager.location
     }
     
     required init?(coder: NSCoder) {
@@ -153,7 +136,7 @@ class StoreCell: UITableViewCell {
         }
     }
     
-    func configure(with store: Store) {
+    func configure(with store: Store, location: CLLocation?) {
         discountLabel.text = " \(store.discount) "
         if store.cashback {
             cashbackLabel.isHidden = false
@@ -163,14 +146,8 @@ class StoreCell: UITableViewCell {
         nameLabel.text = store.name
         addressLabel.text = store.address
         
-        guard let location = myLocation else { return }
+        guard let myLocation = location else { return }
         
-        distanceLabel.text = "\(String(format: "%.1f",location.distance(from: CLLocation(latitude: store.latitude, longitude: store.longitude)) / 1000))km"
-    }
-}
-
-extension StoreCell: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
+        distanceLabel.text = "\(String(format: "%.1f",myLocation.distance(from: CLLocation(latitude: store.latitude, longitude: store.longitude)) / 1000))km"
     }
 }
