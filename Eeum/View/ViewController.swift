@@ -309,6 +309,26 @@ class ViewController: UIViewController {
         return tableView
     }()
     
+    lazy var noResultView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    lazy var noResultImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "minus.magnifyingglass")
+        imageView.tintColor = .black
+        return imageView
+    }()
+    
+    lazy var noResultLabel: UILabel = {
+        let label = UILabel()
+        label.text = "검색 결과가 없습니다."
+        label.textColor = .gray
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         hideKeyboard()
@@ -364,6 +384,9 @@ class ViewController: UIViewController {
         resultView.addSubview(cashbackLabel)
         
         scrollView.addSubview(tableView)
+        scrollView.addSubview(noResultView)
+        noResultView.addSubview(noResultImage)
+        noResultView.addSubview(noResultLabel)
         
         scrollView.snp.makeConstraints {
             $0.top.bottom.equalTo(view.safeAreaLayoutGuide)
@@ -491,6 +514,23 @@ class ViewController: UIViewController {
             $0.top.equalTo(resultView.snp.bottom).offset(1)
             $0.leading.trailing.equalTo(view)
             $0.bottom.equalToSuperview()
+        }
+        
+        noResultView.snp.makeConstraints {
+            $0.top.equalTo(resultView.snp.bottom).offset(1)
+            $0.leading.trailing.equalTo(view)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        noResultImage.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(50)
+            $0.centerX.equalToSuperview()
+            $0.height.width.equalTo(50)
+        }
+        
+        noResultLabel.snp.makeConstraints {
+            $0.top.equalTo(noResultImage.snp.bottom).offset(10)
+            $0.centerX.equalToSuperview()
         }
     }
     
@@ -742,7 +782,13 @@ extension ViewController: CLLocationManagerDelegate {
 //MARK: - UITableView
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.isFiltering ? self.filteredStores.count : self.stores.count
+        let count = self.isFiltering ? self.filteredStores.count : self.stores.count
+        if count == 0 {
+            self.noResultView.isHidden = false
+        } else {
+            self.noResultView.isHidden = true
+        }
+        return count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
