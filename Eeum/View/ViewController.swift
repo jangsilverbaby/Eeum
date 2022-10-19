@@ -49,7 +49,7 @@ class ViewController: UIViewController {
         scrollView.delegate = self
         
         let refreshControl = UIRefreshControl()
-        refreshControl.addTarget(self, action: #selector(refreshAllView), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(pullView), for: .valueChanged)
         refreshControl.tintColor = .clear
         
         scrollView.refreshControl = refreshControl
@@ -325,6 +325,7 @@ class ViewController: UIViewController {
     lazy var noResultLabel: UILabel = {
         let label = UILabel()
         label.text = "검색 결과가 없습니다."
+        label.font = .systemFont(ofSize: 15)
         label.textColor = .gray
         return label
     }()
@@ -536,7 +537,7 @@ class ViewController: UIViewController {
     
     func hideKeyboard() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self,
-            action: #selector(dismissKeyboard))
+                                                                 action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
     }
     
@@ -548,24 +549,7 @@ class ViewController: UIViewController {
         }
     }
     
-    func updateAddress() {
-        guard let location = locationManager.location else { return }
-        myLocation = location
-        let geocoder = CLGeocoder()
-        let locale = Locale(identifier: "Ko-kr")
-        
-        geocoder.reverseGeocodeLocation(location, preferredLocale: locale) { placemarks, error in
-            if let placemark = placemarks?.first {
-                self.addressLabel.text = "\(placemark.administrativeArea ?? "") \(placemark.thoroughfare ?? "") \(placemark.subThoroughfare ?? "") "
-            }
-        }
-    }
-    
-    func getDistance(store: Store) -> Double? {
-        return myLocation?.distance(from: CLLocation(latitude: store.latitude, longitude: store.longitude))
-    }
-    
-    @objc func refreshAllView() {
+    @objc func pullView() {
         updateAddress()
         tableView.reloadData()
         
@@ -665,6 +649,15 @@ class ViewController: UIViewController {
 
 //MARK: - Banner UIScrollView
 extension ViewController: UIScrollViewDelegate {
+    // 스크롤 되면 현재 페이지 표시 변경
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.frame.size.width != 0 {
+            let value = (scrollView.contentOffset.x / scrollView.frame.width)
+            pageControl.currentPage = Int(round(value))
+        }
+    }
+    
+    // 화면에서 손을 떼면 변경
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         refreshImage.image = UIImage(systemName: "arrow.down.circle.fill")
         refreshLabel.text = "가치 소비와 인천 사랑의 실천~"
@@ -698,7 +691,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
             self.bannerMove()
         }
     }
-    // 배너 움직이는 매서드
+    // 배너 움직이는 메서드
     func bannerMove() {
         // 현재페이지가 마지막 페이지일 경우
         if nowPage == banners.count-1 {
@@ -792,6 +785,23 @@ extension ViewController: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         self.updateAddress()
         self.tableView.reloadData()
+    }
+    
+    func updateAddress() {
+        guard let location = locationManager.location else { return }
+        myLocation = location
+        let geocoder = CLGeocoder()
+        let locale = Locale(identifier: "Ko-kr")
+        
+        geocoder.reverseGeocodeLocation(location, preferredLocale: locale) { placemarks, error in
+            if let placemark = placemarks?.first {
+                self.addressLabel.text = "\(placemark.administrativeArea ?? "") \(placemark.thoroughfare ?? "") \(placemark.subThoroughfare ?? "") "
+            }
+        }
+    }
+    
+    func getDistance(store: Store) -> Double? {
+        return myLocation?.distance(from: CLLocation(latitude: store.latitude, longitude: store.longitude))
     }
 }
 

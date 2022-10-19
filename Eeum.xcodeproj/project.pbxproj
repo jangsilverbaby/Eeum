@@ -81,8 +81,8 @@
 		F2ADCF1628FA7887007D69DF /* Util */ = {
 			isa = PBXGroup;
 			children = (
-				F2ADCF1E28FB8076007D69DF /* PaddedTextField.swift */,
 				F2ADCF2028FBA0BC007D69DF /* UIColor+Extension.swift */,
+				F2ADCF1E28FB8076007D69DF /* PaddedTextField.swift */,
 				6791328228FD490300A68E54 /* FlexibleTableView.swift */,
 			);
 			path = Util;
