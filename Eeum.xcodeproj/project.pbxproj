@@ -354,6 +354,7 @@
 				DEVELOPMENT_TEAM = P446D369B2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Eeum/Resources/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "앱을 열 떄마다 위치정보 가져오기 허용";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -386,6 +387,7 @@
 				DEVELOPMENT_TEAM = P446D369B2;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Eeum/Resources/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "앱을 열 떄마다 위치정보 가져오기 허용";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

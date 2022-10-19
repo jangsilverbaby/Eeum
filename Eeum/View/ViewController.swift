@@ -44,7 +44,33 @@ class ViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
         scrollView.backgroundColor = .gray1
+        scrollView.delegate = self
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshAllView), for: .valueChanged)
+        refreshControl.tintColor = .clear
+        
+        scrollView.refreshControl = refreshControl
         return scrollView
+    }()
+    
+    lazy var refreshView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    lazy var refreshLabel: UILabel = {
+        let label = UILabel()
+        label.text = "가치 소비와 인천 사랑의 실천~"
+        label.font = .systemFont(ofSize: 12)
+        return label
+    }()
+    
+    lazy var refreshImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "arrow.down.circle.fill")
+        imageView.tintColor = .yellow1
+        return imageView
     }()
     
     lazy var collectionView: UICollectionView = {
@@ -305,6 +331,10 @@ class ViewController: UIViewController {
     func setupSubView() {
         view.addSubview(scrollView)
         
+        scrollView.addSubview(refreshView)
+        refreshView.addSubview(refreshLabel)
+        refreshView.addSubview(refreshImage)
+        
         scrollView.addSubview(collectionView)
         scrollView.addSubview(pageControl)
         
@@ -336,6 +366,21 @@ class ViewController: UIViewController {
         scrollView.snp.makeConstraints {
             $0.top.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.leading.trailing.equalToSuperview()
+        }
+        
+        refreshView.snp.makeConstraints {
+            $0.centerX.equalTo(view)
+            $0.bottom.equalTo(collectionView.snp.top)
+        }
+        
+        refreshLabel.snp.makeConstraints {
+            $0.bottom.equalTo(refreshImage.snp.top).offset(-8)
+            $0.centerX.equalToSuperview()
+        }
+        
+        refreshImage.snp.makeConstraints {
+            $0.bottom.equalToSuperview().offset(-10)
+            $0.centerX.equalToSuperview()
         }
         
         collectionView.snp.makeConstraints {
@@ -468,9 +513,19 @@ class ViewController: UIViewController {
         
         geocoder.reverseGeocodeLocation(location, preferredLocale: locale) { placemarks, error in
             if let placemark = placemarks?.first {
-                self.addressLabel.text = "\(placemark.administrativeArea ?? "") \(placemark.locality ?? "") \(placemark.subLocality ?? "") \(placemark.thoroughfare ?? "") \(placemark.name ?? "")"
+                self.addressLabel.text = "\(placemark.administrativeArea ?? "") \(placemark.thoroughfare ?? "") \(placemark.subThoroughfare ?? "") "
             }
         }
+    }
+    
+    @objc func refreshAllView() {
+        updateAddress()
+        tableView.reloadData()
+        
+        refreshImage.image = UIImage(systemName: "arrow.up.circle.fill")
+        refreshLabel.text = "손을 놓으면 업데이트 -"
+        
+        scrollView.refreshControl?.endRefreshing()
     }
     
     @objc func dismissKeyboard() {
@@ -556,11 +611,9 @@ class ViewController: UIViewController {
 
 //MARK: - Banner UIScrollView
 extension ViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.frame.size.width != 0 {
-            let value = (scrollView.contentOffset.x / scrollView.frame.width)
-            pageControl.currentPage = Int(round(value))
-        }
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        refreshImage.image = UIImage(systemName: "arrow.down.circle.fill")
+        refreshLabel.text = "가치 소비와 인천 사랑의 실천~"
     }
 }
 
