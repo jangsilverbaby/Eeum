@@ -136,7 +136,7 @@ class StoreCell: UITableViewCell {
         }
     }
     
-    func configure(with store: Store, location: CLLocation?) {
+    func configure(with store: Store, distance: Double?) {
         discountLabel.text = " \(store.discount) "
         if store.cashback {
             cashbackLabel.isHidden = false
@@ -146,8 +146,8 @@ class StoreCell: UITableViewCell {
         nameLabel.text = store.name
         addressLabel.text = store.address
         
-        guard let myLocation = location else { return }
+        guard let myDistance = distance else { return }
         
-        distanceLabel.text = "\(String(format: "%.1f",myLocation.distance(from: CLLocation(latitude: store.latitude, longitude: store.longitude)) / 1000))km"
+        distanceLabel.text = "\(String(format: "%.1f", myDistance / 1000))km"
     }
 }

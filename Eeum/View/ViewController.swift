@@ -815,9 +815,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StoreCell", for: indexPath) as! StoreCell
         cell.selectionStyle = .none
         if self.isFiltering {
-            cell.configure(with: filteredStores[indexPath.row], location: myLocation)
+            cell.configure(with: filteredStores[indexPath.row], distance: getDistance(store: filteredStores[indexPath.row]))
         } else {
-            cell.configure(with: stores[indexPath.row], location: myLocation)
+            cell.configure(with: stores[indexPath.row], distance: getDistance(store: stores[indexPath.row]))
         }
         return cell
     }
