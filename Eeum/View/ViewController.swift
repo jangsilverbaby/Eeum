@@ -19,7 +19,7 @@ class ViewController: UIViewController {
     
     var myLocation: CLLocation?
     
-    let stores: [Store] = [
+    var stores: [Store] = [
         Store(category: .cafe, locality: .junggu, discount: "3% 할인", cashback: false, name: "LIGHT HOUSE", address: "인천시 중구 참외전로 174번길 8-1", longitude: 126.635135, latitude: 37.4719620),
         Store(category: .cafe, locality: .seogu, discount: "1% 할인", cashback: true, name: "카페.경선비", address: "인천시 서구 이름3로 220,상가1동 102호", longitude: 126.715834, latitude: 37.5887730),
         Store(category: .restorant, locality: .junggu, discount: "1% 할인", cashback: true, name: "본가삼치", address: "인천광역시 중구 우현로67번길 49, 1층(전동)", longitude: 126.628855, latitude: 37.4754022),
@@ -561,6 +561,10 @@ class ViewController: UIViewController {
         }
     }
     
+    func getDistance(store: Store) -> Double? {
+        return myLocation?.distance(from: CLLocation(latitude: store.latitude, longitude: store.longitude))
+    }
+    
     @objc func refreshAllView() {
         updateAddress()
         tableView.reloadData()
@@ -625,6 +629,8 @@ class ViewController: UIViewController {
             isFiltering = false
         }
         
+        searchBar.searchTextField.text = ""
+        cashbackSwitch.isOn = false
         self.reloadResultCount()
         self.tableView.reloadData()
     }
@@ -647,6 +653,11 @@ class ViewController: UIViewController {
             isFiltering = false
         }
         
+        categoryPickerView.selectRow(0, inComponent: 0, animated: true)
+        categoryTextField.text = categorys[0]
+        localityPickerView.selectRow(0, inComponent: 0, animated: true)
+        localityTextField.text = localitys[0]
+        searchBar.searchTextField.text = ""
         self.reloadResultCount()
         self.tableView.reloadData()
     }
@@ -752,6 +763,11 @@ extension ViewController: UISearchBarDelegate {
             isFiltering = false
         }
         
+        categoryPickerView.selectRow(0, inComponent: 0, animated: true)
+        categoryTextField.text = categorys[0]
+        localityPickerView.selectRow(0, inComponent: 0, animated: true)
+        localityTextField.text = localitys[0]
+        cashbackSwitch.isOn = false
         self.reloadResultCount()
         self.tableView.reloadData()
     }
@@ -782,6 +798,10 @@ extension ViewController: CLLocationManagerDelegate {
 //MARK: - UITableView
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        stores.sort {
+            return getDistance(store: $0) ?? 0 < getDistance(store: $1) ?? 0
+        }
+        
         let count = self.isFiltering ? self.filteredStores.count : self.stores.count
         if count == 0 {
             self.noResultView.isHidden = false
