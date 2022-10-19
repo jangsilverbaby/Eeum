@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import CoreLocation
 
 class StoreCell: UITableViewCell {
 
